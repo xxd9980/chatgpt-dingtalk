@@ -203,7 +203,6 @@ func (c *ChatGPT) ChatWithContext(question string) (answer string, err error) {
 	if public.Config.AzureOn {
 		userId = ""
 	}
-	if isModelSupportedChatCompletions(model) {
 		req := openai.ChatCompletionRequest{
 			Model: model,
 			Messages: []openai.ChatCompletionMessage{
@@ -231,31 +230,6 @@ func (c *ChatGPT) ChatWithContext(question string) (answer string, err error) {
 		})
 		c.ChatContext.seqTimes++
 		return resp.Choices[0].Message.Content, nil
-	} else {
-		req := openai.CompletionRequest{
-			Model:       model,
-			MaxTokens:   c.maxAnswerLen,
-			Prompt:      prompt,
-			Temperature: 0.6,
-			User:        c.userId,
-			Stop:        []string{c.ChatContext.aiRole.Name + ":", c.ChatContext.humanRole.Name + ":"},
-		}
-		resp, err := c.client.CreateCompletion(c.ctx, req)
-		if err != nil {
-			return "", err
-		}
-		resp.Choices[0].Text = formatAnswer(resp.Choices[0].Text)
-		c.ChatContext.old = append(c.ChatContext.old, conversation{
-			Role:   c.ChatContext.humanRole,
-			Prompt: question,
-		})
-		c.ChatContext.old = append(c.ChatContext.old, conversation{
-			Role:   c.ChatContext.aiRole,
-			Prompt: resp.Choices[0].Text,
-		})
-		c.ChatContext.seqTimes++
-		return resp.Choices[0].Text, nil
-	}
 }
 func (c *ChatGPT) GenerateImage(ctx context.Context, prompt string) (string, error) {
 	model := public.Config.Model
