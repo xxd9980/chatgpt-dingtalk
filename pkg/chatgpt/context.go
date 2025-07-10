@@ -212,7 +212,6 @@ func (c *ChatGPT) ChatWithContext(question string) (answer string, err error) {
 				},
 			},
 			MaxTokens:   c.maxAnswerLen,
-			Temperature: 0.6,
 			User:        userId,
 		}
 		resp, err := c.client.CreateChatCompletion(c.ctx, req)
