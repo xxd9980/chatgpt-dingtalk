@@ -54,9 +54,7 @@ func New(userId string) *ChatGPT {
 					return url.Parse(public.Config.HttpProxy)
 				}}
 		}
-		if public.Config.BaseURL != "" {
-			config.BaseURL = public.Config.BaseURL + "/v1"
-		}
+		config.BaseURL = public.Config.BaseURL
 	}
 
 	return &ChatGPT{
